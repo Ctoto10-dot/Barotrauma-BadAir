@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<infotexts language="Turkish" nowhitespace="false" translatedname="Türkçe">
+  <ba_modname>Bad Air</ba_modname>
+  <ba_moddescription>Gerçekçi yaşam desteği: CO2 birikimi, yangınlardan çıkan duman ve solunabilir havayı iten su.</ba_moddescription>
+  <afflictionname.ba_hypercapnia>Bayat hava</afflictionname.ba_hypercapnia>
+  <afflictiondescription.ba_hypercapnia>Yüz kızarmış, nefes alıp verme ağır ve hızlı; giderek artan baş dönmesi ve zihin bulanıklığı var.</afflictiondescription.ba_hypercapnia>
+  <afflictioncauseofdeath.ba_hypercapnia>Bayat havadan boğularak öldü.</afflictioncauseofdeath.ba_hypercapnia>
+  <afflictioncauseofdeathself.ba_hypercapnia>Bayat havadan boğuldun.</afflictioncauseofdeathself.ba_hypercapnia>
+  <afflictionname.ba_smoke_inhalation>Duman zehirlenmesi</afflictionname.ba_smoke_inhalation>
+  <afflictiondescription.ba_smoke_inhalation>Gözler kızarmış ve sulanıyor, göğsün derinliklerinden sert bir öksürük yükseliyor.</afflictiondescription.ba_smoke_inhalation>
+  <afflictioncauseofdeath.ba_smoke_inhalation>Dumandan boğularak öldü.</afflictioncauseofdeath.ba_smoke_inhalation>
+  <afflictioncauseofdeathself.ba_smoke_inhalation>Dumandan boğuldun.</afflictioncauseofdeathself.ba_smoke_inhalation>
+  <badair.hud.co2>Hava zehirliliği: [value]%</badair.hud.co2>
+  <entityname.ba_oxygenfilter>Oksijen jeneratörü filtresi</entityname.ba_oxygenfilter>
+  <UILabel.ba.filterslot>Oksijen filtresi</UILabel.ba.filterslot>
+  <DisplayName.ba.rechargefilter>[itemname] (yenileme)</DisplayName.ba.rechargefilter>
+  <entitydescription.ba_oxygenfilter>Oksijen jeneratörü için değiştirilebilir aktif karbon kartuşu. Karbondioksiti ve dumanı tutarak havayı solunabilir tutar ve kullandıkça yavaşça aşınır.</entitydescription.ba_oxygenfilter>
+</infotexts>

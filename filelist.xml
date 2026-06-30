@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<contentpackage name="Bad Air" modversion="1.0.1" corepackage="False" steamworkshopid="3750499674" gameversion="1.13.4.0">
+  <Text file="%ModDir%/Content/Texts/English.xml" />
+  <Text file="%ModDir%/Content/Texts/Russian.xml" />
+  <Text file="%ModDir%/Content/Texts/SimplifiedChinese.xml" />
+  <Text file="%ModDir%/Content/Texts/German.xml" />
+  <Text file="%ModDir%/Content/Texts/French.xml" />
+  <Text file="%ModDir%/Content/Texts/CastilianSpanish.xml" />
+  <Text file="%ModDir%/Content/Texts/BrazilianPortuguese.xml" />
+  <Text file="%ModDir%/Content/Texts/Polish.xml" />
+  <Text file="%ModDir%/Content/Texts/Turkish.xml" />
+  <Afflictions file="%ModDir%/Content/Afflictions.xml" />
+  <Item file="%ModDir%/Content/Items/ba_oxygenfilter.xml" />
+</contentpackage>

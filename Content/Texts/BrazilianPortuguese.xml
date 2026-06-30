@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<infotexts language="Brazilian Portuguese" nowhitespace="false" translatedname="Português brasileiro">
+  <ba_modname>Bad Air</ba_modname>
+  <ba_moddescription>Suporte de vida realista: acúmulo de CO2, fumaça de incêndios e água deslocando o ar respirável.</ba_moddescription>
+  <afflictionname.ba_hypercapnia>Ar viciado</afflictionname.ba_hypercapnia>
+  <afflictiondescription.ba_hypercapnia>O rosto está avermelhado e a respiração, pesada e rápida, com tontura e confusão crescentes.</afflictiondescription.ba_hypercapnia>
+  <afflictioncauseofdeath.ba_hypercapnia>Asfixiado pelo ar viciado.</afflictioncauseofdeath.ba_hypercapnia>
+  <afflictioncauseofdeathself.ba_hypercapnia>Você se asfixiou com o ar viciado.</afflictioncauseofdeathself.ba_hypercapnia>
+  <afflictionname.ba_smoke_inhalation>Inalação de fumaça</afflictionname.ba_smoke_inhalation>
+  <afflictiondescription.ba_smoke_inhalation>Os olhos estão vermelhos e lacrimejando, e uma tosse áspera ressoa no fundo do peito.</afflictiondescription.ba_smoke_inhalation>
+  <afflictioncauseofdeath.ba_smoke_inhalation>Sufocado pela fumaça.</afflictioncauseofdeath.ba_smoke_inhalation>
+  <afflictioncauseofdeathself.ba_smoke_inhalation>Você sufocou com a fumaça.</afflictioncauseofdeathself.ba_smoke_inhalation>
+  <badair.hud.co2>Toxicidade do ar: [value]%</badair.hud.co2>
+  <entityname.ba_oxygenfilter>Filtro do gerador de oxigênio</entityname.ba_oxygenfilter>
+  <UILabel.ba.filterslot>Filtro de oxigênio</UILabel.ba.filterslot>
+  <DisplayName.ba.rechargefilter>[itemname] (recarga)</DisplayName.ba.rechargefilter>
+  <entitydescription.ba_oxygenfilter>Um cartucho de carvão ativado substituível para o gerador de oxigênio. Ele retém o dióxido de carbono e a fumaça para manter o ar respirável, e se desgasta aos poucos com o uso.</entitydescription.ba_oxygenfilter>
+</infotexts>

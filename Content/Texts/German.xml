@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<infotexts language="German" nowhitespace="false" translatedname="Deutsch">
+  <ba_modname>Bad Air</ba_modname>
+  <ba_moddescription>Realistische Lebenserhaltung: CO2-Anstieg, Rauch durch Feuer und Wasser, das die Atemluft verdrängt.</ba_moddescription>
+  <afflictionname.ba_hypercapnia>Verbrauchte Luft</afflictionname.ba_hypercapnia>
+  <afflictiondescription.ba_hypercapnia>Das Gesicht ist gerötet, die Atmung schwer und schnell, begleitet von zunehmendem Schwindel und Verwirrung.</afflictiondescription.ba_hypercapnia>
+  <afflictioncauseofdeath.ba_hypercapnia>An verbrauchter Luft erstickt.</afflictioncauseofdeath.ba_hypercapnia>
+  <afflictioncauseofdeathself.ba_hypercapnia>Du bist an verbrauchter Luft erstickt.</afflictioncauseofdeathself.ba_hypercapnia>
+  <afflictionname.ba_smoke_inhalation>Rauchvergiftung</afflictionname.ba_smoke_inhalation>
+  <afflictiondescription.ba_smoke_inhalation>Die Augen sind gerötet und tränen, und ein rauer Husten rasselt tief in der Brust.</afflictiondescription.ba_smoke_inhalation>
+  <afflictioncauseofdeath.ba_smoke_inhalation>An Rauch erstickt.</afflictioncauseofdeath.ba_smoke_inhalation>
+  <afflictioncauseofdeathself.ba_smoke_inhalation>Du bist an Rauch erstickt.</afflictioncauseofdeathself.ba_smoke_inhalation>
+  <badair.hud.co2>Luftgiftigkeit: [value]%</badair.hud.co2>
+  <entityname.ba_oxygenfilter>Sauerstoffgenerator-Filter</entityname.ba_oxygenfilter>
+  <UILabel.ba.filterslot>Sauerstofffilter</UILabel.ba.filterslot>
+  <DisplayName.ba.rechargefilter>[itemname] (Regenerieren)</DisplayName.ba.rechargefilter>
+  <entitydescription.ba_oxygenfilter>Eine austauschbare Aktivkohlepatrone für den Sauerstoffgenerator. Sie bindet Kohlendioxid und Rauch, um die Luft atembar zu halten, und nutzt sich mit der Zeit ab.</entitydescription.ba_oxygenfilter>
+</infotexts>

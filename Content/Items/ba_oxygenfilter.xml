@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bad Air — Oxygen Generator Filter.
+  A consumable CO2/smoke sorbent cartridge. The C# sim (AtmosphereSim) drives the actual scrubbing: a
+  generator with a healthy filter scrubs fully and resists soot; without one it scrubs weakly and clogs.
+  A dedicated filter slot is added to the generator at runtime by FilterSlotInjector (no vanilla override).
+  Texture paths use %ModDir% so they resolve from the mod's content package, not the game root.
+-->
+<Items>
+  <Item name="" identifier="ba_oxygenfilter" category="Equipment" Tags="smallitem,ba_oxygenfilter" maxstacksize="8" maxstacksizecharacterinventory="1" MaxStackSizeHoldableOrWearableInventory="1" health="100" scale="0.5" cargocontaineridentifier="metalcrate" impactsoundtag="impact_metal_light" allowdroppingonswap="true">
+    <Price baseprice="60" minavailable="2">
+      <Price storeidentifier="merchantoutpost" minavailable="5" />
+      <Price storeidentifier="merchantengineering" multiplier="0.9" minavailable="8" />
+      <Price storeidentifier="merchantmine" multiplier="1.2" minavailable="3" />
+    </Price>
+    <!-- Fresh subs ship with a filter already seated in the generator; after that it's a normal consumable
+         that wears out and gets replaced. (It lands in the dedicated filter slot, not the tank slots.) -->
+    <PreferredContainer primary="oxygengenerator" spawnprobability="1" />
+    <!-- A spare or two aboard, plus findable/buyable out in the world. -->
+    <PreferredContainer secondary="supplycab" minamount="1" maxamount="2" spawnprobability="0.5" />
+    <PreferredContainer secondary="outpostsupplycab" minamount="1" maxamount="2" spawnprobability="0.3" />
+    <PreferredContainer secondary="wreckengcab,abandonedengcab,pirateengcab" amount="1" spawnprobability="0.1" />
+    <Deconstruct time="10">
+      <Item identifier="carbon" />
+      <Item identifier="aluminium" />
+    </Deconstruct>
+    <Fabricate suitablefabricators="fabricator" requiredtime="10" outcondition="1.0">
+      <RequiredSkill identifier="mechanical" level="25" />
+      <RequiredItem identifier="aluminium" amount="1" />
+      <RequiredItem identifier="carbon" amount="2" />
+    </Fabricate>
+    <!-- Recharge a worn/spent filter at the fabricator: reuse the housing, refresh only the activated carbon
+         (1 carbon) for a full cartridge. Cheaper than fabricating a new one (which also costs aluminium + an
+         extra carbon), so recharging is the economical loop — but it still spends 1 carbon per cycle. -->
+    <Fabricate suitablefabricators="fabricator" displayname="ba.rechargefilter" requiredtime="8" outcondition="1.0">
+      <RequiredSkill identifier="mechanical" level="20" />
+      <RequiredItem identifier="ba_oxygenfilter" mincondition="0.0" maxcondition="0.9" usecondition="false" />
+      <RequiredItem identifier="carbon" amount="1" />
+    </Fabricate>
+    <!-- sourcerects are cropped to the opaque pixels of each texture so the art fills the slot/world body. -->
+    <InventoryIcon texture="%ModDir%/Content/Items/ba_oxygenfilter_icon.png" sourcerect="41,42,60,57" origin="0.5,0.5" />
+    <Sprite texture="%ModDir%/Content/Items/ba_oxygenfilter.png" sourcerect="22,25,23,60" depth="0.55" origin="0.5,0.5" />
+    <Body width="22" height="58" density="9.0" />
+    <Holdable canbecombined="true" slots="Any,RightHand,LeftHand" holdpos="30,-15" handle1="0,5" handle2="0,-5" msg="ItemMsgPickUpSelect" />
+    <Quality>
+      <QualityStat stattype="Condition" value="0.1" />
+    </Quality>
+  </Item>
+</Items>

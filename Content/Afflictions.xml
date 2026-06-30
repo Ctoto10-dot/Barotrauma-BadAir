@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Afflictions>
+  <!-- Bad Air: CO2 buildup / hypercapnia. Strength is driven from C# (AtmosphereSim) from the
+       hull's CO2. Sensory signature = passing out: cyanotic blue flush, a woozy soft blur, then
+       convulsions and blackout. NO screen distortion/ripple (that read like a stun). -->
+  <Affliction name="Stale air" identifier="ba_hypercapnia" description="The face is flushed and breathing comes heavy and fast, with growing dizziness and confusion." type="ba_hypercapnia" causeofdeathdescription="Asphyxiated on stale air" selfcauseofdeathdescription="You have asphyxiated on stale air." limbspecific="false" indicatorlimb="Torso" activationthreshold="1" maxstrength="100">
+    <!-- Mild (1-25): a faint cyanotic flush. -->
+    <Effect minstrength="1" maxstrength="25" minfacetint="110,150,175,0" maxfacetint="110,150,175,60" />
+    <!-- Dizziness (25-60): woozy soft blur and a little colour fringing. -->
+    <Effect minstrength="25" maxstrength="60" minfacetint="110,150,175,60" maxfacetint="95,135,195,120" minscreenblur="0.0" maxscreenblur="3.5" minchromaticaberration="0.0" maxchromaticaberration="1.0" />
+    <!-- Severe (60-100): blacking out — convulsing, vitality falling. -->
+    <Effect minstrength="60" maxstrength="100" multiplybymaxvitality="true" minvitalitydecrease="0" maxvitalitydecrease="2" minscreenblur="3.5" maxscreenblur="6.0" minchromaticaberration="1.0" maxchromaticaberration="1.8" convulseamount="0.1" minbodytint="95,135,195,0" maxbodytint="95,135,195,140" />
+    <!-- Custom CO2 icon (CO2 + up arrow), 128x128 to match vanilla affliction-icon size (a 401px source drew
+         huge over the whole body). %ModDir% so it resolves inside the mod; no color tint. -->
+    <icon texture="%ModDir%/Content/UI/ba_co2_icon.png" sourcerect="0,0,128,128" origin="0,0" />
+  </Affliction>
+  <!-- Bad Air: smoke inhalation. Strength is driven from C# (AtmosphereSim) from the hull's smoke
+       density (produced by fire). Sensory signature = BLINDED: a smoke overlay fills the screen and
+       chokes vision down (screen blur). The overlay is the distinct "I can't see" visual that sets
+       it apart from CO2 (which is just a blue woozy blur). -->
+  <Affliction name="Smoke inhalation" identifier="ba_smoke_inhalation" description="The eyes are red and streaming, and a harsh cough rattles deep in the chest." type="ba_smoke_inhalation" causeofdeathdescription="Choked on smoke" selfcauseofdeathdescription="You have choked on smoke." limbspecific="false" indicatorlimb="Torso" activationthreshold="1" afflictionoverlayalphaislinear="false" maxstrength="100">
+    <!-- Full-screen smoke; alpha set per-effect. %ModDir% so it resolves inside the mod. -->
+    <AfflictionOverlay texture="%ModDir%/Content/UI/ba_smoke_overlay.png" />
+    <!-- Mild (1-30): the haze rolls in. Overlay fades up from 0 so crossing the activation
+         threshold doesn't pop the screen white (no flicker as the smoke clears). -->
+    <Effect minstrength="1" maxstrength="30" minfacetint="70,70,72,0" maxfacetint="70,70,72,60" MinAfflictionOverlayAlphaMultiplier="0.0" MaxAfflictionOverlayAlphaMultiplier="0.55" />
+    <!-- Heavy smoke (30-90): the compartment fills — vision chokes down, breathing fails. No direct
+         vitality loss here: the patient blacks out from oxygen starvation (driven in C#) but can still
+         be dragged out / masked / treated. -->
+    <Effect minstrength="30" maxstrength="90" minfacetint="70,70,72,60" maxfacetint="84,84,88,120" minscreenblur="1.0" maxscreenblur="6.0" MinAfflictionOverlayAlphaMultiplier="0.55" MaxAfflictionOverlayAlphaMultiplier="0.92" />
+    <!-- Critical (90-100): lungs failing — rapid collapse. Death starts here, not at 70, so there's a
+         window to react (stay an unconscious "vegetable") before it turns fatal. -->
+    <Effect minstrength="90" maxstrength="100" multiplybymaxvitality="true" minvitalitydecrease="0" maxvitalitydecrease="1.5" minscreenblur="6.0" maxscreenblur="7.0" MinAfflictionOverlayAlphaMultiplier="0.92" MaxAfflictionOverlayAlphaMultiplier="0.96" />
+    <!-- Custom smoke-inhalation icon (smoking lungs), 128x128 to match the CO2 icon's size. No color tint. -->
+    <icon texture="%ModDir%/Content/UI/ba_smoke_icon.png" sourcerect="0,0,128,128" origin="0,0" />
+  </Affliction>
+</Afflictions>

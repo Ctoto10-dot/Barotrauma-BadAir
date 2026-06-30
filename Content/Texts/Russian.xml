@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<infotexts language="Russian" nowhitespace="false" translatedname="Русский">
+  <ba_modname>Bad Air</ba_modname>
+  <ba_moddescription>Реалистичное жизнеобеспечение: накопление CO2, дым от пожаров и вытеснение воздуха водой.</ba_moddescription>
+  <!-- Гиперкапния (отравление углекислым газом). -->
+  <afflictionname.ba_hypercapnia>Спёртый воздух</afflictionname.ba_hypercapnia>
+  <afflictiondescription.ba_hypercapnia>Лицо раскраснелось, дыхание частое и тяжёлое. Нарастают головокружение и спутанность сознания.</afflictiondescription.ba_hypercapnia>
+  <afflictioncauseofdeath.ba_hypercapnia>Удушье от спёртого воздуха.</afflictioncauseofdeath.ba_hypercapnia>
+  <afflictioncauseofdeathself.ba_hypercapnia>Вы задохнулись в спёртом воздухе.</afflictioncauseofdeathself.ba_hypercapnia>
+  <!-- Отравление дымом (пожар). -->
+  <afflictionname.ba_smoke_inhalation>Отравление дымом</afflictionname.ba_smoke_inhalation>
+  <afflictiondescription.ba_smoke_inhalation>Глаза покраснели и слезятся, из груди вырывается надсадный кашель.</afflictiondescription.ba_smoke_inhalation>
+  <afflictioncauseofdeath.ba_smoke_inhalation>Задохнулся в дыму.</afflictioncauseofdeath.ba_smoke_inhalation>
+  <afflictioncauseofdeathself.ba_smoke_inhalation>Вы задохнулись в дыму.</afflictioncauseofdeathself.ba_smoke_inhalation>
+  <!-- Строка качества воздуха в мониторе состояния. [value] = токсичность воздуха 0..100% (0 = чистый, 100 = смертельно). -->
+  <badair.hud.co2>Токсичность воздуха: [value]%</badair.hud.co2>
+  <!-- Фильтр кислородного генератора (предмет). -->
+  <entityname.ba_oxygenfilter>Фильтр кислородного генератора</entityname.ba_oxygenfilter>
+  <entitydescription.ba_oxygenfilter>Сменный картридж с активированным углём для кислородного генератора. Поглощает углекислый газ и дым, очищая воздух, и со временем вырабатывается.</entitydescription.ba_oxygenfilter>
+  <!-- Подпись над выделенным слотом фильтра в генераторе. -->
+  <UILabel.ba.filterslot>Кислородный фильтр</UILabel.ba.filterslot>
+  <!-- Название рецепта перезарядки фильтра в конструкторе ([itemname] = имя фильтра). -->
+  <DisplayName.ba.rechargefilter>[itemname] (перезарядка)</DisplayName.ba.rechargefilter>
+</infotexts>

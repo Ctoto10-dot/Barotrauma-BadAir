@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<infotexts language="Simplified Chinese" nowhitespace="true" translatedname="中文(简体)">
+  <ba_modname>Bad Air</ba_modname>
+  <ba_moddescription>真实的生命维持：二氧化碳积聚、火灾产生的烟雾，以及积水排挤可呼吸的空气。</ba_moddescription>
+  <afflictionname.ba_hypercapnia>浑浊空气</afflictionname.ba_hypercapnia>
+  <afflictiondescription.ba_hypercapnia>面色潮红，呼吸急促而沉重，并逐渐头晕目眩、意识模糊。</afflictiondescription.ba_hypercapnia>
+  <afflictioncauseofdeath.ba_hypercapnia>因浑浊空气而窒息。</afflictioncauseofdeath.ba_hypercapnia>
+  <afflictioncauseofdeathself.ba_hypercapnia>你因浑浊的空气而窒息。</afflictioncauseofdeathself.ba_hypercapnia>
+  <afflictionname.ba_smoke_inhalation>烟雾吸入</afflictionname.ba_smoke_inhalation>
+  <afflictiondescription.ba_smoke_inhalation>双眼通红、不断流泪，胸腔深处发出刺耳的咳嗽。</afflictiondescription.ba_smoke_inhalation>
+  <afflictioncauseofdeath.ba_smoke_inhalation>因吸入烟雾而窒息。</afflictioncauseofdeath.ba_smoke_inhalation>
+  <afflictioncauseofdeathself.ba_smoke_inhalation>你因吸入烟雾而窒息。</afflictioncauseofdeathself.ba_smoke_inhalation>
+  <badair.hud.co2>空气毒性：[value]%</badair.hud.co2>
+  <entityname.ba_oxygenfilter>制氧机滤芯</entityname.ba_oxygenfilter>
+  <UILabel.ba.filterslot>氧气滤芯</UILabel.ba.filterslot>
+  <DisplayName.ba.rechargefilter>[itemname]（再生）</DisplayName.ba.rechargefilter>
+  <entitydescription.ba_oxygenfilter>制氧机的可更换活性炭滤芯。吸收二氧化碳和烟雾，保持空气可供呼吸，并会随使用逐渐损耗。</entitydescription.ba_oxygenfilter>
+</infotexts>

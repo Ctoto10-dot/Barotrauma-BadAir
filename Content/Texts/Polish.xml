@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<infotexts language="Polish" nowhitespace="false" translatedname="Polski">
+  <ba_modname>Bad Air</ba_modname>
+  <ba_moddescription>Realistyczne podtrzymywanie życia: gromadzenie CO2, dym z pożarów i woda wypierająca powietrze do oddychania.</ba_moddescription>
+  <afflictionname.ba_hypercapnia>Zużyte powietrze</afflictionname.ba_hypercapnia>
+  <afflictiondescription.ba_hypercapnia>Twarz jest zaczerwieniona, oddech ciężki i przyspieszony, z narastającymi zawrotami głowy i splątaniem.</afflictiondescription.ba_hypercapnia>
+  <afflictioncauseofdeath.ba_hypercapnia>Uduszony zużytym powietrzem.</afflictioncauseofdeath.ba_hypercapnia>
+  <afflictioncauseofdeathself.ba_hypercapnia>Udusiłeś się zużytym powietrzem.</afflictioncauseofdeathself.ba_hypercapnia>
+  <afflictionname.ba_smoke_inhalation>Zatrucie dymem</afflictionname.ba_smoke_inhalation>
+  <afflictiondescription.ba_smoke_inhalation>Oczy są czerwone i łzawiące, a w głębi klatki piersiowej rozlega się ostry kaszel.</afflictiondescription.ba_smoke_inhalation>
+  <afflictioncauseofdeath.ba_smoke_inhalation>Uduszony dymem.</afflictioncauseofdeath.ba_smoke_inhalation>
+  <afflictioncauseofdeathself.ba_smoke_inhalation>Udusiłeś się dymem.</afflictioncauseofdeathself.ba_smoke_inhalation>
+  <badair.hud.co2>Toksyczność powietrza: [value]%</badair.hud.co2>
+  <entityname.ba_oxygenfilter>Filtr generatora tlenu</entityname.ba_oxygenfilter>
+  <UILabel.ba.filterslot>Filtr tlenowy</UILabel.ba.filterslot>
+  <DisplayName.ba.rechargefilter>[itemname] (regeneracja)</DisplayName.ba.rechargefilter>
+  <entitydescription.ba_oxygenfilter>Wymienny wkład z węglem aktywnym do generatora tlenu. Pochłania dwutlenek węgla i dym, utrzymując powietrze zdatnym do oddychania, i stopniowo się zużywa.</entitydescription.ba_oxygenfilter>
+</infotexts>

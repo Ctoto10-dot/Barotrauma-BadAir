@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<infotexts language="English" nowhitespace="false" translatedname="English">
+  <ba_modname>Bad Air</ba_modname>
+  <ba_moddescription>Realistic life support: CO2 buildup, smoke from fires, and water displacing breathable air.</ba_moddescription>
+  <!-- Hypercapnia affliction (CO2 poisoning). -->
+  <afflictionname.ba_hypercapnia>Stale air</afflictionname.ba_hypercapnia>
+  <afflictiondescription.ba_hypercapnia>The face is flushed and breathing comes heavy and fast, with growing dizziness and confusion.</afflictiondescription.ba_hypercapnia>
+  <afflictioncauseofdeath.ba_hypercapnia>Asphyxiated on stale air.</afflictioncauseofdeath.ba_hypercapnia>
+  <afflictioncauseofdeathself.ba_hypercapnia>You have asphyxiated on stale air.</afflictioncauseofdeathself.ba_hypercapnia>
+  <!-- Smoke inhalation (fire). -->
+  <afflictionname.ba_smoke_inhalation>Smoke inhalation</afflictionname.ba_smoke_inhalation>
+  <afflictiondescription.ba_smoke_inhalation>The eyes are red and streaming, and a harsh cough rattles deep in the chest.</afflictiondescription.ba_smoke_inhalation>
+  <afflictioncauseofdeath.ba_smoke_inhalation>Choked on smoke.</afflictioncauseofdeath.ba_smoke_inhalation>
+  <afflictioncauseofdeathself.ba_smoke_inhalation>You have choked on smoke.</afflictioncauseofdeathself.ba_smoke_inhalation>
+  <!-- Status-monitor air-quality tooltip line. [value] = air toxicity 0..100% (0 = fresh, 100 = lethal). -->
+  <badair.hud.co2>Air toxicity: [value]%</badair.hud.co2>
+  <!-- Oxygen generator filter (item). -->
+  <entityname.ba_oxygenfilter>Oxygen Generator Filter</entityname.ba_oxygenfilter>
+  <entitydescription.ba_oxygenfilter>A replaceable activated-carbon cartridge for the oxygen generator. It traps carbon dioxide and smoke to keep the air breathable, and wears out gradually as it works.</entitydescription.ba_oxygenfilter>
+  <!-- Caption above the generator's dedicated filter slot. -->
+  <UILabel.ba.filterslot>Oxygen Filter</UILabel.ba.filterslot>
+  <!-- Fabricator recipe name for recharging a spent filter ([itemname] = the filter's name). -->
+  <DisplayName.ba.rechargefilter>[itemname] (recharge)</DisplayName.ba.rechargefilter>
+</infotexts>
