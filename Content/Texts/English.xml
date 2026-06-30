@@ -13,8 +13,8 @@
   <afflictioncauseofdeath.ba_smoke_inhalation>Choked on smoke.</afflictioncauseofdeath.ba_smoke_inhalation>
   <afflictioncauseofdeathself.ba_smoke_inhalation>You have choked on smoke.</afflictioncauseofdeathself.ba_smoke_inhalation>
   <!-- Status-monitor air-quality tooltip line. [value] = air toxicity 0..100% (0 = fresh, 100 = lethal). -->
-  <badair.hud.co2>Air toxicity: [value]%</badair.hud.co2>
-  <badair.hud.smoke>Smoke density: [value]%</badair.hud.smoke>
+  <badair.hud.co2>CO2: [value]%</badair.hud.co2>
+  <badair.hud.smoke>Smoke: [value]%</badair.hud.smoke>
   <!-- Oxygen generator filter (item). -->
   <entityname.ba_oxygenfilter>Oxygen Generator Filter</entityname.ba_oxygenfilter>
   <entitydescription.ba_oxygenfilter>A replaceable activated-carbon cartridge for the oxygen generator. It traps carbon dioxide and smoke to keep the air breathable, and wears out gradually as it works.</entitydescription.ba_oxygenfilter>

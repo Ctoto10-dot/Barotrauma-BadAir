@@ -13,8 +13,8 @@
   <afflictioncauseofdeath.ba_smoke_inhalation>Задохнулся в дыму.</afflictioncauseofdeath.ba_smoke_inhalation>
   <afflictioncauseofdeathself.ba_smoke_inhalation>Вы задохнулись в дыму.</afflictioncauseofdeathself.ba_smoke_inhalation>
   <!-- Строка качества воздуха в мониторе состояния. [value] = токсичность воздуха 0..100% (0 = чистый, 100 = смертельно). -->
-  <badair.hud.co2>Токсичность воздуха: [value]%</badair.hud.co2>
-  <badair.hud.smoke>Задымленность: [value]%</badair.hud.smoke>
+  <badair.hud.co2>CO2: [value]%</badair.hud.co2>
+  <badair.hud.smoke>Дым: [value]%</badair.hud.smoke>
   <!-- Фильтр кислородного генератора (предмет). -->
   <entityname.ba_oxygenfilter>Фильтр кислородного генератора</entityname.ba_oxygenfilter>
   <entitydescription.ba_oxygenfilter>Сменный картридж с активированным углём для кислородного генератора. Поглощает углекислый газ и дым, очищая воздух, и со временем вырабатывается.</entitydescription.ba_oxygenfilter>
