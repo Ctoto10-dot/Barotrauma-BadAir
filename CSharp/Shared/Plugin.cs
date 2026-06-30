@@ -132,10 +132,12 @@ public class Plugin : IAssemblyPlugin, IDisposable, IEventPluginPreInitialize, I
 			postfix: new HarmonyMethod(AccessTools.Method(typeof(Patch_Hull), "OxygenPercentage_Postfix"))
 		);
 
+#if CLIENT
 		Harmony.Patch(
 			original: AccessTools.Method(typeof(Submarine), "DrawFront"),
 			prefix: new HarmonyMethod(AccessTools.Method(typeof(SmokeRenderer), "DrawFront_Prefix"))
 		);
+#endif
 		Harmony.Patch((MethodBase)typeof(RepairTool).GetMethod("Use", new Type[2]
 		{
 			typeof(float),
