@@ -134,6 +134,10 @@ public class Plugin : IAssemblyPlugin, IDisposable, IEventPluginPreInitialize, I
 
 #if CLIENT
 		Harmony.Patch(
+			original: AccessTools.Method(typeof(MiniMap), "SetTooltip"),
+			prefix: new HarmonyMethod(AccessTools.Method(typeof(Patch_MiniMap), "SetTooltip_Prefix"))
+		);
+		Harmony.Patch(
 			original: AccessTools.Method(typeof(Submarine), "DrawFront"),
 			prefix: new HarmonyMethod(AccessTools.Method(typeof(SmokeRenderer), "DrawFront_Prefix"))
 		);
