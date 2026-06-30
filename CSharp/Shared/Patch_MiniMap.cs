@@ -23,7 +23,7 @@ public static class Patch_MiniMap
             {
                 // Заменяем ванильные надписи на короткий O2
                 string modifiedLine2 = line2.Value.Replace("Качество воздуха", "O2").Replace("Air quality", "O2");
-                line2 = LocalizedString.op_Implicit(modifiedLine2);
+                line2 = modifiedLine2;
 
                 float co2 = HullAtmosphere.TryGet(hull, out var atmosphere) ? atmosphere.CO2 : 400f;
                 float percent = AtmosphereSim.AirToxicityPercent(co2);
