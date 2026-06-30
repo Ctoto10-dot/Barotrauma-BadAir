@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <infotexts language="English" nowhitespace="false" translatedname="English">
   <ba_modname>Bad Air</ba_modname>
   <ba_moddescription>Realistic life support: CO2 buildup, smoke from fires, and water displacing breathable air.</ba_moddescription>
@@ -14,6 +14,7 @@
   <afflictioncauseofdeathself.ba_smoke_inhalation>You have choked on smoke.</afflictioncauseofdeathself.ba_smoke_inhalation>
   <!-- Status-monitor air-quality tooltip line. [value] = air toxicity 0..100% (0 = fresh, 100 = lethal). -->
   <badair.hud.co2>Air toxicity: [value]%</badair.hud.co2>
+  <badair.hud.smoke>Smoke density: [value]%</badair.hud.smoke>
   <!-- Oxygen generator filter (item). -->
   <entityname.ba_oxygenfilter>Oxygen Generator Filter</entityname.ba_oxygenfilter>
   <entitydescription.ba_oxygenfilter>A replaceable activated-carbon cartridge for the oxygen generator. It traps carbon dioxide and smoke to keep the air breathable, and wears out gradually as it works.</entitydescription.ba_oxygenfilter>

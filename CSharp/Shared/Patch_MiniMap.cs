@@ -28,6 +28,14 @@ public static class Patch_MiniMap
                 line2 += "\n";
                 line2 += TextManager.GetWithVariable("badair.hud.co2", "[value]", text, FormatCapitals.Yes);
                 line2Color = (percent < 25f) ? SafeColor : ((percent < 60f) ? WarnColor : DangerColor);
+
+                float smokePercent = AtmosphereSim.StrengthFromSmoke(atmosphere?.Smoke ?? 0f);
+                if (smokePercent > 0f)
+                {
+                    string smokeText = ((int)Math.Round(smokePercent)).ToString(CultureInfo.InvariantCulture);
+                    line2 += "\n";
+                    line2 += TextManager.GetWithVariable("badair.hud.smoke", "[value]", smokeText, FormatCapitals.Yes);
+                }
             }
         }
     }
