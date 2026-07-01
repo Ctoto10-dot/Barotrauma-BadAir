@@ -487,7 +487,7 @@ public static class AtmosphereSim
 			else
 			{
 				co2Scrub = 0.0005f;
-				smokeScrub = 0.03f;
+				smokeScrub = 0.01f;
 			}
 			float num26 = MathHelper.Clamp((co2Scrub + 0.5f * num21) * deltaTime, 0f, 1f);
 			atmosphere5.CO2 -= (atmosphere5.CO2 - 400f) * num26;
