@@ -482,7 +482,7 @@ public static class AtmosphereSim
 			else if (isFiltered)
 			{
 				co2Scrub = 0.5f;
-				smokeScrub = 0.15f;
+				smokeScrub = 0.05f;
 			}
 			else
 			{
