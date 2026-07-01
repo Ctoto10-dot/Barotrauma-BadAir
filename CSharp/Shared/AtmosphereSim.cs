@@ -91,7 +91,7 @@ public static class AtmosphereSim
 
 	public const float OxygenBreathHealPerSecond = 0.5f;
 
-	public const float ShardScrubPerSecond = 0.08f;
+	public const float ShardScrubPerSecond = 0.005f;
 
 	public const float ShardScanInterval = 1f;
 
@@ -486,8 +486,8 @@ public static class AtmosphereSim
 			}
 			else if (flag6)
 			{
-				co2Scrub = 0.12f;
-				smokeScrub = 0.12f;
+				co2Scrub = 0.0005f;
+				smokeScrub = 0f;
 			}
 			else
 			{
