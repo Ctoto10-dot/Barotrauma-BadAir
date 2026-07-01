@@ -484,11 +484,6 @@ public static class AtmosphereSim
 				co2Scrub = 0.5f;
 				smokeScrub = 0.15f;
 			}
-			else if (flag6)
-			{
-				co2Scrub = 0.0005f;
-				smokeScrub = 0f;
-			}
 			else
 			{
 				co2Scrub = 0.0005f;
