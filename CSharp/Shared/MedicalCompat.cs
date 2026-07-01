@@ -4,35 +4,25 @@ using Microsoft.Xna.Framework;
 
 namespace BadAir;
 
-internal static class NeuroTraumaCompat
+internal static class MedicalCompat
 {
 	private static readonly Identifier RespiratoryArrestId = IdentifierExtensions.ToIdentifier("respiratoryarrest");
-
 	private static readonly Identifier AcidosisId = IdentifierExtensions.ToIdentifier("acidosis");
-
 	private static readonly Identifier LungDamageId = IdentifierExtensions.ToIdentifier("lungdamage");
 
 	private static bool resolved;
-
 	private static bool active;
 
 	private static AfflictionPrefab? respiratoryArrest;
-
 	private static AfflictionPrefab? acidosis;
-
 	private static AfflictionPrefab? lungDamage;
 
 	public const float SymptomCeiling = 85f;
-
 	private const float AcidosisFromCo2Factor = 0.4f;
-
 	private const float AcidosisRampPerSecond = 0.15f;
-
 	private const float ArrestRampPerSecond = 0.6f;
-
 	private const float LungDamageFromSmokePerSecond = 0.3f;
-
-	private const float LungDamageCeiling = 45f;
+	private const float LungDamageCeiling = 100f; // HARDCORE mode for NT
 
 	public static bool Active
 	{
@@ -40,6 +30,24 @@ internal static class NeuroTraumaCompat
 		{
 			Resolve();
 			return active;
+		}
+	}
+
+	public static bool HasAcidosis
+	{
+		get
+		{
+			Resolve();
+			return acidosis != null;
+		}
+	}
+
+	public static bool HasRespiratoryArrest
+	{
+		get
+		{
+			Resolve();
+			return respiratoryArrest != null;
 		}
 	}
 
@@ -74,10 +82,10 @@ internal static class NeuroTraumaCompat
 				lungDamage = prefab;
 			}
 		}
-		active = respiratoryArrest != null && acidosis != null;
+		active = respiratoryArrest != null || acidosis != null || lungDamage != null;
 		if (active)
 		{
-			Plugin.Log("NeuroTrauma detected — CO2 feeds acidosis, smoke arrest feeds respiratoryarrest (Ambu bag treats it).");
+			Plugin.Log("Medical overhaul detected (NeuroTrauma / EMO) — integrating afflictions.");
 		}
 	}
 
@@ -85,7 +93,7 @@ internal static class NeuroTraumaCompat
 	{
 		if (acidosis != null)
 		{
-			RaiseToward(character, acidosis, AcidosisId, co2AfflictionStrength * 0.4f, 0.15f, deltaTime);
+			RaiseToward(character, acidosis, AcidosisId, co2AfflictionStrength * AcidosisFromCo2Factor, AcidosisRampPerSecond, deltaTime);
 		}
 	}
 
@@ -95,7 +103,7 @@ internal static class NeuroTraumaCompat
 		{
 			float num = MathHelper.Clamp((smokeAfflictionStrength - 60f) / 40f, 0f, 1f);
 			float target = MathHelper.Lerp(1f, respiratoryArrest.MaxStrength, num);
-			RaiseToward(character, respiratoryArrest, RespiratoryArrestId, target, 0.6f, deltaTime);
+			RaiseToward(character, respiratoryArrest, RespiratoryArrestId, target, ArrestRampPerSecond, deltaTime);
 		}
 	}
 
@@ -106,7 +114,7 @@ internal static class NeuroTraumaCompat
 			float num = MathHelper.Clamp((smokeAfflictionStrength - 60f) / 40f, 0f, 1f);
 			if (!(num <= 0f))
 			{
-				RaiseToward(character, lungDamage, LungDamageId, 45f, 0.3f * num, deltaTime);
+				RaiseToward(character, lungDamage, LungDamageId, LungDamageCeiling, LungDamageFromSmokePerSecond * num, deltaTime);
 			}
 		}
 	}
@@ -134,4 +142,3 @@ internal static class NeuroTraumaCompat
 		}
 	}
 }
-

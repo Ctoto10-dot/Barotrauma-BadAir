@@ -628,10 +628,13 @@ public static class AtmosphereSim
 		if (val != null)
 		{
 			float num = StrengthFromCO2(co2);
-			if (NeuroTraumaCompat.Active)
+			if (MedicalCompat.Active)
 			{
-				NeuroTraumaCompat.ApplyAcidosis(character, num, deltaTime);
-				num = Math.Min(num, 85f);
+				MedicalCompat.ApplyAcidosis(character, num, deltaTime);
+				if (MedicalCompat.HasAcidosis)
+				{
+					num = Math.Min(num, 85f);
+				}
 			}
 			float rampPerSecond = 3f * OxygenResistanceFactor(character);
 			DriveAffliction(character, val, HypercapniaId, num, rampPerSecond, 5f, deltaTime);
@@ -649,8 +652,8 @@ public static class AtmosphereSim
 		float num = ((characterHealth != null) ? characterHealth.GetAfflictionStrengthByIdentifier(SmokeId, true) : 0f);
 		float recoverPerSecond = ((num >= 60f) ? 0.3f : 8f);
 		float num2 = StrengthFromSmoke(smoke);
-		bool active = NeuroTraumaCompat.Active;
-		if (active)
+		bool active = MedicalCompat.Active;
+		if (active && MedicalCompat.HasRespiratoryArrest)
 		{
 			num2 = Math.Min(num2, 85f);
 		}
@@ -660,10 +663,13 @@ public static class AtmosphereSim
 		{
 			if (active)
 			{
-				NeuroTraumaCompat.ApplyRespiratoryArrest(character, num, deltaTime);
-				NeuroTraumaCompat.ApplyLungDamage(character, num, deltaTime);
-				arrestCeiling.Remove(character);
-				return;
+				MedicalCompat.ApplyRespiratoryArrest(character, num, deltaTime);
+				MedicalCompat.ApplyLungDamage(character, num, deltaTime);
+				if (MedicalCompat.HasRespiratoryArrest)
+				{
+					arrestCeiling.Remove(character);
+					return;
+				}
 			}
 			StrongBox<float> value = arrestCeiling.GetValue(character, OxygenCeilingFactory);
 			value.Value = Math.Max(0f, Math.Min(value.Value, character.Oxygen) - 3f * deltaTime);
