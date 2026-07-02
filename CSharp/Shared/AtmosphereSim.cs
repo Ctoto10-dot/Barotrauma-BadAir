@@ -545,12 +545,19 @@ public static class AtmosphereSim
 
 				if (isBreathingGear)
 				{
-					foreach (Item allItem in ((Inventory)itemAt.OwnInventory).AllItems)
+					try
 					{
-						if (allItem != null && allItem.Condition > 0f && allItem.HasTag(OxygenSourceTag))
+						foreach (Item allItem in ((Inventory)itemAt.OwnInventory).AllItems)
 						{
-							return allItem;
+							if (allItem != null && allItem.Condition > 0f && allItem.HasTag(OxygenSourceTag))
+							{
+								return allItem;
+							}
 						}
+					}
+					catch (InvalidOperationException)
+					{
+						// Ignore if inventory is modified during swap
 					}
 				}
 			}
@@ -828,12 +835,19 @@ public static class AtmosphereSim
 			{
 				continue;
 			}
-			foreach (Item allItem in ((Inventory)inventory).AllItems)
+			try
 			{
-				if (allItem != null && allItem.Condition > 0f && (allItem.Prefab.Identifier == OxygenFilterId || allItem.HasTag(AirFilterTag)))
+				foreach (Item allItem in ((Inventory)inventory).AllItems)
 				{
-					return allItem;
+					if (allItem != null && allItem.Condition > 0f && (allItem.Prefab.Identifier == OxygenFilterId || allItem.HasTag(AirFilterTag)))
+					{
+						return allItem;
+					}
 				}
+			}
+			catch (InvalidOperationException)
+			{
+				// Ignore if inventory is modified during swap
 			}
 		}
 		return null;
