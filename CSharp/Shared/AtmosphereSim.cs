@@ -49,7 +49,7 @@ public static class AtmosphereSim
 
 	public const float VentilatedSmokeScrubPerSecond = 0.12f;
 
-	public const float FilteredSmokeScrubPerSecond = 0.45f;
+	public const float FilteredSmokeScrubPerSecond = 0.9f;
 
 	public const float WaterDouseSmokePerSecond = 2f;
 
@@ -138,6 +138,8 @@ public static class AtmosphereSim
 	private static List<Reactor>? reactorCache;
 
 	private static readonly HashSet<Submarine> poweredStations = new HashSet<Submarine>();
+	
+	private static int lastItemCount = -1;
 
 	private static float shardScanTimer;
 
@@ -255,6 +257,13 @@ public static class AtmosphereSim
 
 	public static void TickHulls(float deltaTime)
 	{
+		if (lastItemCount != Item.ItemList.Count)
+		{
+			generatorCache = null;
+			reactorCache = null;
+			lastItemCount = Item.ItemList.Count;
+		}
+
 		List<Hull> hullList2 = Hull.HullList;
 		for (int l = 0; l < hullList2.Count; l++)
 		{

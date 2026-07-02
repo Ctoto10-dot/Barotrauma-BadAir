@@ -8,264 +8,365 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace BadAir;
 
-	public static class SmokeRenderer
-	{
-		private const float MinSmoke = 4f;
+public static class SmokeRenderer
+{
+    private class SmokeParticle
+    {
+        public Vector2 LocalPosition; 
+        public Vector2 Velocity;
+        public float Size;
+        public float Rotation;
+        public float RotationSpeed;
+        public float Alpha;
+        public float MaxAlpha;
+        public float Lifetime;
+        public float MaxLifetime;
+    }
 
-		private const float FogFullSmoke = 42f;
+    private static readonly Dictionary<Hull, List<SmokeParticle>> hullParticles = new Dictionary<Hull, List<SmokeParticle>>();
+    private static readonly Stack<SmokeParticle> particlePool = new Stack<SmokeParticle>();
+    
+    private static Texture2D? fogTexture;
+    private static Sprite fogSpriteRef;
+    private static bool fogLoadFailed;
+    
+    private static readonly Color SmokeColor = new Color(75, 77, 85); 
+    private static bool debugLogged = false;
 
-		private const float FadeSpeed = 2.5f;
+    private static readonly RasterizerState ScissorRasterizer = new RasterizerState
+    {
+        ScissorTestEnable = true,
+        CullMode = (CullMode)0
+    };
 
-		private static readonly Color SmokeLight = new Color(140, 142, 150);
+    private static SmokeParticle GetParticle()
+    {
+        if (particlePool.Count > 0) return particlePool.Pop();
+        return new SmokeParticle();
+    }
 
-		private static readonly Color SmokeDark = new Color(95, 97, 108);
+    private static void UpdateParticles(float deltaTime)
+    {
+        if (GameMain.GameSession == null || Level.Loaded == null)
+        {
+            foreach (var list in hullParticles.Values)
+            {
+                foreach (var p in list) particlePool.Push(p);
+            }
+            hullParticles.Clear();
+            return;
+        }
 
-		private static readonly float[] BaseCover = new float[3] { 1.8f, 2.2f, 2.6f };
+        List<Hull> hullList = Hull.HullList;
+        for (int i = 0; i < hullList.Count; i++)
+        {
+            Hull hull = hullList[i];
+            if (hull == null || ((Entity)hull).Removed) continue;
 
-		private static readonly float[] BaseDrift = new float[3] { 0.11f, -0.07f, 0.05f };
+            if (HullAtmosphere.TryGet(hull, out HullAtmosphere atmosphere) && atmosphere.Smoke > 2f)
+            {
+                // Damage maxes out at smoke = 45, so cap visuals at 50 instead of 100
+                float smokePct = MathHelper.Clamp(atmosphere.Smoke / 50f, 0f, 1f); 
+                float visualIntensity = smokePct; // Linear scaling so low smoke is clearly visible
+                float targetParticleCount = Math.Min(75f, (hull.Volume / 1000f) * visualIntensity * 20f);
+                
+                if (!hullParticles.TryGetValue(hull, out var particles))
+                {
+                    particles = new List<SmokeParticle>();
+                    hullParticles[hull] = particles;
+                }
 
-		private static readonly float[] BaseRotate = new float[3] { 0.04f, -0.03f, 0.05f };
+                if (particles.Count < targetParticleCount)
+                {
+                    Gap flowGap = null;
+                    float highestOtherSmoke = atmosphere.Smoke; // Must be higher than OUR smoke
+                    
+                    foreach (Gap gap in hull.ConnectedGaps)
+                    {
+                        if (gap.IsRoomToRoom && gap.Open > 0.1f && ((MapEntity)gap).linkedTo.Count >= 2)
+                        {
+                            Hull otherHull = (((MapEntity)gap).linkedTo[0] == hull) ? (((MapEntity)gap).linkedTo[1] as Hull) : (((MapEntity)gap).linkedTo[0] as Hull);
+                            if (otherHull != null && HullAtmosphere.TryGet(otherHull, out HullAtmosphere otherAtmos))
+                            {
+                                if (otherAtmos.Smoke > highestOtherSmoke)
+                                {
+                                    highestOtherSmoke = otherAtmos.Smoke;
+                                    flowGap = gap;
+                                }
+                            }
+                        }
+                    }
 
-		private static readonly float[] BaseAlpha = new float[3] { 0.64f, 0.52f, 0.42f };
+                    float deficit = targetParticleCount - particles.Count;
+                    float spawnRateF = deficit * deltaTime * 15f; 
+                    int spawnCount = (int)spawnRateF;
+                    if (Rand.Range(0f, 1f) < (spawnRateF - spawnCount)) spawnCount++;
+                    
+                    if (deficit > 5f && spawnCount < 1) spawnCount = 1;
+                    if (deficit > 10f) spawnCount = (int)(deficit * 0.5f); // Faster catch-up
 
-		private static readonly ConditionalWeakTable<Hull, StrongBox<float>> rendered = new ConditionalWeakTable<Hull, StrongBox<float>>();
+                    for (int s = 0; s < spawnCount; s++)
+                    {
+                        SpawnParticle(hull, particles, smokePct, flowGap);
+                    }
+                }
+            }
+        }
 
-		private static Texture2D? fogTexture;
-		private static Sprite fogSpriteRef;
+        var hullsToRemove = new List<Hull>();
+        foreach (var kvp in hullParticles)
+        {
+            Hull hull = kvp.Key;
+            var particles = kvp.Value;
+            
+            if (((Entity)hull).Removed)
+            {
+                foreach (var p in particles) particlePool.Push(p);
+                hullsToRemove.Add(hull);
+                continue;
+            }
 
-		private static bool fogLoadFailed;
+            Rectangle hullRect = ((MapEntity)hull).Rect;
+            float halfWidth = hullRect.Width * 0.5f;
+            float halfHeight = hullRect.Height * 0.5f;
 
-		private static readonly RasterizerState ScissorRasterizer = new RasterizerState
-		{
-			ScissorTestEnable = true,
-			CullMode = (CullMode)0
-		};
+            float currentSmoke = 0f;
+            if (HullAtmosphere.TryGet(hull, out HullAtmosphere currentAtmosphere))
+            {
+                currentSmoke = currentAtmosphere.Smoke;
+            }
 
-		private static double lastTime = -1.0;
+            for (int i = particles.Count - 1; i >= 0; i--)
+            {
+                var p = particles[i];
+                p.Lifetime += deltaTime;
+                
+                // If the room has been cleared of smoke, fade existing particles out rapidly
+                if (currentSmoke < 1f)
+                {
+                    p.Lifetime += deltaTime * 10f;
+                }
 
-		public static void DrawFront_Prefix(SpriteBatch spriteBatch)
-		{
-			
-			if ((object)Screen.Selected != GameMain.GameScreen || GameMain.GameSession == null)
-			{
-				return;
-			}
-			GameScreen gameScreen = GameMain.GameScreen;
-			Camera val = ((gameScreen != null) ? ((Screen)gameScreen).Cam : null);
-			if (val == null)
-			{
-				return;
-			}
-			Texture2D val2 = GetFogTexture();
-			if (val2 == null)
-			{
-				return;
-			}
-			spriteBatch.End();
-			try
-			{
-				DrawFog(spriteBatch, val, val2);
-			}
-			finally
-			{
-				spriteBatch.Begin((SpriteSortMode)3, BlendState.NonPremultiplied, (SamplerState)null, DepthStencilState.None, (RasterizerState)null, (Effect)null, (Matrix?)val.Transform);
-			}
-		}
+                if (p.Lifetime >= p.MaxLifetime)
+                {
+                    particlePool.Push(p);
+                    particles.RemoveAt(i);
+                    continue;
+                }
 
-		private static void DrawFog(SpriteBatch spriteBatch, Camera cam, Texture2D tex)
-		{
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			float num = MathHelper.Clamp(2.5f * GetDeltaTime(), 0f, 1f);
-			Vector2 worldViewCenter = cam.WorldViewCenter;
-			float num2 = (float)cam.WorldView.Width * 0.5f;
-			float num3 = (float)cam.WorldView.Height * 0.5f;
-			Vector2 val = new Vector2((float)tex.Width * 0.5f, (float)tex.Height * 0.5f);
-			
-			float num4 = (float)Timing.TotalTime;
-			GraphicsDevice graphicsDevice = ((GraphicsResource)spriteBatch).GraphicsDevice;
-			Rectangle scissorRectangle = graphicsDevice.ScissorRectangle;
-			Viewport viewport = graphicsDevice.Viewport;
-			Rectangle bounds = viewport.Bounds;
-			List<Hull> hullList = Hull.HullList;
-			Vector2 val6 = default(Vector2);
-			Vector2 val8 = default(Vector2);
-			for (int i = 0; i < hullList.Count; i++)
-			{
-				Hull val2 = hullList[i];
-				float num5 = 0f;
-				if (HullAtmosphere.TryGet(val2, out HullAtmosphere atmosphere) && atmosphere.Smoke > 4f)
-				{
-					num5 = MathHelper.Clamp((atmosphere.Smoke - 4f) / 38f, 0f, 1f);
-				}
-				StrongBox<float> value;
-				bool flag = rendered.TryGetValue(val2, out value);
-				if (num5 <= 0f && !flag)
-				{
-					continue;
-				}
-				if (!flag)
-				{
-					value = new StrongBox<float>(0f);
-					rendered.Add(val2, value);
-				}
-				value.Value += (num5 - value.Value) * num;
-				float value2 = value.Value;
-				if (value2 < 0.012f)
-				{
-					continue;
-				}
-				Vector2 worldPosition = ((Entity)val2).WorldPosition;
-				float num6 = ((MapEntity)val2).Rect.Width;
-				float num7 = ((MapEntity)val2).Rect.Height;
-				if (Math.Abs(worldPosition.X - worldViewCenter.X) > num2 + num6 || Math.Abs(worldPosition.Y - worldViewCenter.Y) > num3 + num7)
-				{
-					continue;
-				}
-				float num8 = ((val2.Volume > 0f) ? MathHelper.Clamp(1f - val2.WaterVolume / val2.Volume, 0f, 1f) : 1f);
-				if (num8 < 0.02f)
-				{
-					continue;
-				}
-				float num9 = worldPosition.Y + num7 * 0.5f;
-				float num10 = num9 - num7 * num8;
-				float num11 = num9 - num7 * num8 * 0.5f;
-				Vector2 val3 = Vector2.Transform(new Vector2(worldPosition.X - num6 * 0.5f, 0f - num9), cam.Transform);
-				Vector2 val4 = Vector2.Transform(new Vector2(worldPosition.X + num6 * 0.5f, 0f - num10), cam.Transform);
-				Rectangle val5 = Rectangle.Intersect(new Rectangle((int)Math.Min(val3.X, val4.X), (int)Math.Min(val3.Y, val4.Y), (int)Math.Abs(val4.X - val3.X), (int)Math.Abs(val4.Y - val3.Y)), bounds);
-				if (val5.Width > 0 && val5.Height > 0)
-				{
-					graphicsDevice.ScissorRectangle = val5;
-					spriteBatch.Begin((SpriteSortMode)0, BlendState.NonPremultiplied, SamplerState.LinearClamp, (DepthStencilState)null, ScissorRasterizer, (Effect)null, (Matrix?)cam.Transform);
-					val6 = new Vector2(worldPosition.X, 0f - num11);
-					float num12 = Math.Max(num6, num7);
-					float num13 = num7 * num8;
-					Color val7 = Color.Lerp(SmokeLight, SmokeDark, value2);
-					float num14 = num6 * 0.12f;
-					float num15 = num13 * 0.12f;
-					for (int j = 0; j < BaseCover.Length; j++)
-					{
-						float num16 = (float)j * 2.3f;
-						val8 = new Vector2((float)Math.Sin(num4 * BaseDrift[j] + num16) * num14, (float)Math.Cos(num4 * BaseDrift[j] * 0.8f + num16) * num15);
-						float num17 = num12 * BaseCover[j] / (float)tex.Width;
-						spriteBatch.Draw(tex, val6 + val8, (Rectangle?)null, val7 * (value2 * BaseAlpha[j]), num4 * BaseRotate[j], val, num17, (SpriteEffects)0, 0f);
-					}
-					spriteBatch.End();
-				}
-			}
-			graphicsDevice.ScissorRectangle = scissorRectangle;
-		}
+                p.Velocity.Y += 5f * deltaTime;
+                p.Velocity.X += Rand.Range(-2f, 2f) * deltaTime;
+                
+                p.LocalPosition += p.Velocity * deltaTime;
+                p.Rotation += p.RotationSpeed * deltaTime;
+                
+                float halfSize = p.Size * 0.1f;
+                
+                if (p.LocalPosition.X - halfSize < -halfWidth) { p.LocalPosition.X = -halfWidth + halfSize; p.Velocity.X *= -0.5f; }
+                if (p.LocalPosition.X + halfSize > halfWidth) { p.LocalPosition.X = halfWidth - halfSize; p.Velocity.X *= -0.5f; }
+                if (p.LocalPosition.Y + halfSize > halfHeight) { p.LocalPosition.Y = halfHeight - halfSize; p.Velocity.Y *= -0.5f; }
+                if (p.LocalPosition.Y - halfSize < -halfHeight) { p.LocalPosition.Y = -halfHeight + halfSize; p.Velocity.Y *= -0.5f; }
 
-		private static float GetDeltaTime()
-		{
-			double totalTime = Timing.TotalTime;
-			if (lastTime < 0.0)
-			{
-				lastTime = totalTime;
-				return 0f;
-			}
-			float num = (float)(totalTime - lastTime);
-			lastTime = totalTime;
-			if (!(num > 0f) || !(num < 0.5f))
-			{
-				return 0f;
-			}
-			return num;
-		}
+                float lifePct = p.Lifetime / p.MaxLifetime;
+                if (lifePct < 0.01f) p.Alpha = MathHelper.Lerp(0f, p.MaxAlpha, lifePct / 0.01f); // Instant 0.1s pop
+                else if (lifePct > 0.8f) p.Alpha = MathHelper.Lerp(p.MaxAlpha, 0f, (lifePct - 0.8f) / 0.2f);
+                else p.Alpha = p.MaxAlpha;
+                
+                p.Size += 2f * deltaTime;
+            }
+        }
 
-		private static Texture2D? GetFogTexture()
-		{
-			if (fogTexture != null)
-			{
-				return fogTexture;
-			}
-			if (fogLoadFailed)
-			{
-				return null;
-			}
-			ContentPackage val = null;
-			foreach (ContentPackage allPackage in ContentPackageManager.AllPackages)
-			{
-				if (allPackage.Name == "Bad Air")
-				{
-					val = allPackage;
-					break;
-				}
-			}
-			if (val == null)
-			{
-				fogLoadFailed = true;
-				return null;
-			}
-			string text = System.IO.Path.Combine(val.Dir, "Content", "UI", "ba_smoke_fog.png");
-			try
-			{
-				fogSpriteRef = new Sprite(text, Vector2.Zero);
-				fogTexture = fogSpriteRef.Texture;
-			}
-			catch (Exception ex)
-			{
-				Plugin.Log("Could not load smoke fog texture: " + ex.Message);
-				fogLoadFailed = true;
-			}
-			return fogTexture;
-		}
-	}
+        foreach(var h in hullsToRemove)
+        {
+            hullParticles.Remove(h);
+        }
+    }
 
+    private static void SpawnParticle(Hull hull, List<SmokeParticle> targetList, float smokePct, Gap flowGap = null)
+    {
+        Rectangle rect = ((MapEntity)hull).Rect;
+        float halfWidth = rect.Width * 0.5f;
+        float halfHeight = rect.Height * 0.5f;
+        
+        Vector2 localPos;
+        Vector2 velocity;
+
+        if (flowGap != null && Rand.Range(0f, 1f) < 0.85f) // 85% of particles flow from the door
+        {
+            Vector2 gapWorldPos = ((Entity)flowGap).WorldPosition;
+            Vector2 hullWorldPos = ((Entity)hull).WorldPosition;
+            
+            if (flowGap.IsHorizontal) // Left/Right door
+            {
+                gapWorldPos.Y += Rand.Range(-flowGap.Rect.Height * 0.4f, flowGap.Rect.Height * 0.4f);
+                localPos = gapWorldPos - hullWorldPos;
+                velocity = new Vector2(
+                    (localPos.X < 0) ? Rand.Range(40f, 120f) : Rand.Range(-120f, -40f),
+                    Rand.Range(-2f, 15f)
+                );
+            }
+            else // Hatch (Top/Bottom)
+            {
+                gapWorldPos.X += Rand.Range(-flowGap.Rect.Width * 0.4f, flowGap.Rect.Width * 0.4f);
+                localPos = gapWorldPos - hullWorldPos;
+                velocity = new Vector2(
+                    Rand.Range(-15f, 15f), 
+                    (localPos.Y < 0) ? Rand.Range(40f, 120f) : Rand.Range(-120f, -40f)
+                );
+            }
+        }
+        else
+        {
+            localPos = new Vector2(Rand.Range(-halfWidth, halfWidth), Rand.Range(-halfHeight, halfHeight));
+            velocity = new Vector2(Rand.Range(-5f, 5f), Rand.Range(2f, 8f));
+        }
+        
+        var p = GetParticle();
+        p.LocalPosition = localPos;
+        p.Velocity = velocity;
+        
+        p.Size = Rand.Range(350f, 550f);
+        
+        p.Rotation = Rand.Range(0f, MathHelper.TwoPi);
+        p.RotationSpeed = Rand.Range(-0.1f, 0.1f);
+        p.Alpha = 0f;
+        p.MaxAlpha = MathHelper.Lerp(0.1f, 0.65f, smokePct); // Linear density scaling
+        p.Lifetime = 0f;
+        p.MaxLifetime = Rand.Range(8f, 20f);
+        
+        targetList.Add(p);
+    }
+
+    private static double lastDrawTime = -1.0;
+
+    public static void DrawFront_Prefix(SpriteBatch spriteBatch)
+    {
+        if ((object)Screen.Selected != GameMain.GameScreen || GameMain.GameSession == null) return;
+        GameScreen gameScreen = GameMain.GameScreen;
+        Camera cam = ((gameScreen != null) ? ((Screen)gameScreen).Cam : null);
+        if (cam == null) return;
+
+        double totalTime = Timing.TotalTime;
+        if (lastDrawTime < 0.0) lastDrawTime = totalTime;
+        float deltaTime = (float)(totalTime - lastDrawTime);
+        lastDrawTime = totalTime;
+        if (deltaTime > 0f && deltaTime < 0.5f)
+        {
+            UpdateParticles(deltaTime);
+        }
+
+        Texture2D tex = GetFogTexture();
+        if (tex == null || hullParticles.Count == 0) return;
+
+        if (!debugLogged)
+        {
+            Plugin.Log("SmokeRenderer: First frame of particles being drawn!");
+            debugLogged = true;
+        }
+
+        spriteBatch.End();
+        try
+        {
+            DrawParticles(spriteBatch, cam, tex);
+        }
+        finally
+        {
+            spriteBatch.Begin((SpriteSortMode)3, BlendState.NonPremultiplied, (SamplerState)null, DepthStencilState.None, (RasterizerState)null, (Effect)null, (Matrix?)cam.Transform);
+        }
+    }
+
+    private static void DrawParticles(SpriteBatch spriteBatch, Camera cam, Texture2D tex)
+    {
+        Vector2 worldViewCenter = cam.WorldViewCenter;
+        float num2 = (float)cam.WorldView.Width * 0.5f;
+        float num3 = (float)cam.WorldView.Height * 0.5f;
+        Vector2 origin = new Vector2((float)tex.Width * 0.5f, (float)tex.Height * 0.5f);
+        
+        GraphicsDevice graphicsDevice = ((GraphicsResource)spriteBatch).GraphicsDevice;
+        Rectangle scissorRectangle = graphicsDevice.ScissorRectangle;
+        Viewport viewport = graphicsDevice.Viewport;
+        Rectangle bounds = viewport.Bounds;
+
+        foreach (var kvp in hullParticles)
+        {
+            Hull val2 = kvp.Key;
+            var particles = kvp.Value;
+            if (particles.Count == 0 || ((Entity)val2).Removed) continue;
+
+            Vector2 worldPosition = ((Entity)val2).WorldPosition;
+
+            float num6 = ((MapEntity)val2).Rect.Width;
+            float num7 = ((MapEntity)val2).Rect.Height;
+            if (Math.Abs(worldPosition.X - worldViewCenter.X) > num2 + num6 || Math.Abs(worldPosition.Y - worldViewCenter.Y) > num3 + num7) continue;
+
+            float num8 = ((val2.Volume > 0f) ? MathHelper.Clamp(1f - val2.WaterVolume / val2.Volume, 0f, 1f) : 1f);
+            if (num8 < 0.02f) continue;
+
+            float num9 = worldPosition.Y + num7 * 0.5f;
+            float num10 = num9 - num7 * num8;
+            Vector2 val3 = Vector2.Transform(new Vector2(worldPosition.X - num6 * 0.5f, 0f - num9), cam.Transform);
+            Vector2 val4 = Vector2.Transform(new Vector2(worldPosition.X + num6 * 0.5f, 0f - num10), cam.Transform);
+            
+            Rectangle val5Screen = Rectangle.Intersect(new Rectangle((int)Math.Min(val3.X, val4.X), (int)Math.Min(val3.Y, val4.Y), (int)Math.Abs(val4.X - val3.X), (int)Math.Abs(val4.Y - val3.Y)), bounds);
+
+            int inflateAmount = (int)(6f * cam.Zoom);
+            val5Screen.Inflate(inflateAmount, inflateAmount);
+            val5Screen = Rectangle.Intersect(val5Screen, bounds);
+            
+            if (val5Screen.Width > 0 && val5Screen.Height > 0)
+            {
+                graphicsDevice.ScissorRectangle = val5Screen;
+                spriteBatch.Begin((SpriteSortMode)0, BlendState.NonPremultiplied, SamplerState.LinearClamp, (DepthStencilState)null, ScissorRasterizer, (Effect)null, (Matrix?)cam.Transform);
+
+                for (int p = 0; p < particles.Count; p++)
+                {
+                    var particle = particles[p];
+                    float scale = particle.Size / (float)tex.Width;
+                    Color renderColor = new Color(SmokeColor.R, SmokeColor.G, SmokeColor.B, (int)(particle.Alpha * 255f));
+                    
+                    Vector2 drawPos = new Vector2(worldPosition.X + particle.LocalPosition.X, -(worldPosition.Y + particle.LocalPosition.Y));
+                    
+                    spriteBatch.Draw(tex, drawPos, null, renderColor, particle.Rotation, origin, scale, SpriteEffects.None, 0f);
+                }
+
+                spriteBatch.End();
+            }
+        }
+        
+        graphicsDevice.ScissorRectangle = scissorRectangle;
+    }
+
+    private static Texture2D? GetFogTexture()
+    {
+        if (fogTexture != null) return fogTexture;
+        if (fogLoadFailed) return null;
+        
+        ContentPackage val = null;
+        foreach (ContentPackage allPackage in ContentPackageManager.AllPackages)
+        {
+            if (allPackage.Name == "Bad Air")
+            {
+                val = allPackage;
+                break;
+            }
+        }
+        if (val == null)
+        {
+            fogLoadFailed = true;
+            return null;
+        }
+        string text = System.IO.Path.Combine(val.Dir, "Content", "UI", "ba_smoke_fog.png");
+        try
+        {
+            fogSpriteRef = new Sprite(text, Vector2.Zero);
+            fogTexture = fogSpriteRef.Texture;
+        }
+        catch (Exception ex)
+        {
+            Plugin.Log("Could not load smoke fog texture: " + ex.Message);
+            fogLoadFailed = true;
+        }
+        return fogTexture;
+    }
+}
 #endif
-
