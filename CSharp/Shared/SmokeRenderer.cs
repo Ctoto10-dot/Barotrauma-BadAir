@@ -135,6 +135,8 @@ public static class SmokeRenderer
             {
                 currentSmoke = currentAtmosphere.Smoke;
             }
+            float currentSmokePct = MathHelper.Clamp(currentSmoke / 50f, 0f, 1f);
+            float currentMaxAlpha = MathHelper.Lerp(0.1f, 0.65f, currentSmokePct);
 
             for (int i = particles.Count - 1; i >= 0; i--)
             {
@@ -172,9 +174,9 @@ public static class SmokeRenderer
                 if (p.LocalPosition.Y - halfSize < -halfHeight) { p.LocalPosition.Y = -halfHeight + halfSize; p.Velocity.Y *= -0.5f; }
 
                 float lifePct = p.Lifetime / p.MaxLifetime;
-                if (lifePct < 0.01f) p.Alpha = MathHelper.Lerp(0f, p.MaxAlpha, lifePct / 0.01f); // Instant 0.1s pop
-                else if (lifePct > 0.8f) p.Alpha = MathHelper.Lerp(p.MaxAlpha, 0f, (lifePct - 0.8f) / 0.2f);
-                else p.Alpha = p.MaxAlpha;
+                if (lifePct < 0.01f) p.Alpha = MathHelper.Lerp(0f, currentMaxAlpha, lifePct / 0.01f); // Instant 0.1s pop
+                else if (lifePct > 0.8f) p.Alpha = MathHelper.Lerp(currentMaxAlpha, 0f, (lifePct - 0.8f) / 0.2f);
+                else p.Alpha = currentMaxAlpha;
                 
                 p.Size += 2f * deltaTime;
             }
