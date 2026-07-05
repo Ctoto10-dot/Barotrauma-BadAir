@@ -141,10 +141,10 @@ public static class SmokeRenderer
                 var p = particles[i];
                 p.Lifetime += deltaTime;
                 
-                // If the room has been cleared of smoke, instantly remove particles
+                // If the room has been cleared of smoke, fade existing particles out very rapidly (smooth but fast)
                 if (currentSmoke < 0.1f)
                 {
-                    p.Lifetime = p.MaxLifetime;
+                    p.Lifetime += deltaTime * 30f;
                 }
                 else if (currentSmoke < 1f)
                 {
