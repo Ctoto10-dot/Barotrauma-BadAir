@@ -191,7 +191,7 @@ public static class SmokeRenderer
         Vector2 localPos;
         Vector2 velocity;
 
-        if (flowGap != null && Rand.Range(0f, 1f) < 0.85f) // 85% of particles flow from the door
+        if (flowGap != null && Rand.Range(0f, 1f) < 0.40f) // 40% of particles flow from the door
         {
             Vector2 gapWorldPos = ((Entity)flowGap).WorldPosition;
             Vector2 hullWorldPos = ((Entity)hull).WorldPosition;
@@ -200,19 +200,27 @@ public static class SmokeRenderer
             {
                 gapWorldPos.Y += Rand.Range(-flowGap.Rect.Height * 0.4f, flowGap.Rect.Height * 0.4f);
                 localPos = gapWorldPos - hullWorldPos;
-                velocity = new Vector2(
-                    (localPos.X < 0) ? Rand.Range(40f, 120f) : Rand.Range(-120f, -40f),
-                    Rand.Range(-2f, 15f)
-                );
+                
+                if (localPos.X < 0) {
+                    localPos.X += 40f; // Shift spawn inside the room to avoid hard scissor cuts
+                    velocity = new Vector2(Rand.Range(40f, 120f), Rand.Range(-2f, 15f));
+                } else {
+                    localPos.X -= 40f;
+                    velocity = new Vector2(Rand.Range(-120f, -40f), Rand.Range(-2f, 15f));
+                }
             }
             else // Hatch (Top/Bottom)
             {
                 gapWorldPos.X += Rand.Range(-flowGap.Rect.Width * 0.4f, flowGap.Rect.Width * 0.4f);
                 localPos = gapWorldPos - hullWorldPos;
-                velocity = new Vector2(
-                    Rand.Range(-15f, 15f), 
-                    (localPos.Y < 0) ? Rand.Range(40f, 120f) : Rand.Range(-120f, -40f)
-                );
+                
+                if (localPos.Y < 0) {
+                    localPos.Y += 40f;
+                    velocity = new Vector2(Rand.Range(-15f, 15f), Rand.Range(40f, 120f));
+                } else {
+                    localPos.Y -= 40f;
+                    velocity = new Vector2(Rand.Range(-15f, 15f), Rand.Range(-120f, -40f));
+                }
             }
         }
         else

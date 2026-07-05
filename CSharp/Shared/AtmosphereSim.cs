@@ -313,7 +313,7 @@ public static class AtmosphereSim
 				float num7 = (atmosphere.CO2 * num4 + atmosphere2.CO2 * num5) / (num4 + num5);
 				atmosphere.CO2 += (num7 - atmosphere.CO2) * num6;
 				atmosphere2.CO2 += (num7 - atmosphere2.CO2) * num6;
-				float num8 = MathHelper.Clamp(2.5f * val4.Open * deltaTime, 0f, 0.5f);
+				float num8 = MathHelper.Clamp(10.0f * val4.Open * deltaTime, 0f, 1.0f);
 				float num9 = (atmosphere.Smoke * num4 + atmosphere2.Smoke * num5) / (num4 + num5);
 				atmosphere.Smoke += (num9 - atmosphere.Smoke) * num8;
 				atmosphere2.Smoke += (num9 - atmosphere2.Smoke) * num8;
