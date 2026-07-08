@@ -136,7 +136,7 @@ public static class SmokeRenderer
                 currentSmoke = currentAtmosphere.Smoke;
             }
             float currentSmokePct = MathHelper.Clamp(currentSmoke / 50f, 0f, 1f);
-            float currentMaxAlpha = MathHelper.Lerp(0.1f, 0.65f, currentSmokePct);
+            float currentMaxAlpha = MathHelper.Lerp(0.1f, 0.45f, currentSmokePct);
 
             for (int i = particles.Count - 1; i >= 0; i--)
             {
@@ -244,7 +244,7 @@ public static class SmokeRenderer
         p.Rotation = Rand.Range(0f, MathHelper.TwoPi);
         p.RotationSpeed = Rand.Range(-0.1f, 0.1f);
         p.Alpha = 0f;
-        p.MaxAlpha = MathHelper.Lerp(0.1f, 0.65f, smokePct); // Linear density scaling
+        p.MaxAlpha = MathHelper.Lerp(0.1f, 0.45f, smokePct); // Linear density scaling
         p.Lifetime = 0f;
         p.MaxLifetime = Rand.Range(8f, 20f);
         
